@@ -8,7 +8,7 @@ package ecommerce
 
 import (
 	context "context"
-	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -27,7 +27,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderManagementClient interface {
-	GetOrder(ctx context.Context, in *wrappers.StringValue, opts ...grpc.CallOption) (*Order, error)
+	GetOrder(ctx context.Context, in *wrapperspb.StringValue, opts ...grpc.CallOption) (*Order, error)
 }
 
 type orderManagementClient struct {
@@ -38,7 +38,7 @@ func NewOrderManagementClient(cc grpc.ClientConnInterface) OrderManagementClient
 	return &orderManagementClient{cc}
 }
 
-func (c *orderManagementClient) GetOrder(ctx context.Context, in *wrappers.StringValue, opts ...grpc.CallOption) (*Order, error) {
+func (c *orderManagementClient) GetOrder(ctx context.Context, in *wrapperspb.StringValue, opts ...grpc.CallOption) (*Order, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Order)
 	err := c.cc.Invoke(ctx, OrderManagement_GetOrder_FullMethodName, in, out, cOpts...)
@@ -52,7 +52,7 @@ func (c *orderManagementClient) GetOrder(ctx context.Context, in *wrappers.Strin
 // All implementations must embed UnimplementedOrderManagementServer
 // for forward compatibility
 type OrderManagementServer interface {
-	GetOrder(context.Context, *wrappers.StringValue) (*Order, error)
+	GetOrder(context.Context, *wrapperspb.StringValue) (*Order, error)
 	mustEmbedUnimplementedOrderManagementServer()
 }
 
@@ -60,7 +60,7 @@ type OrderManagementServer interface {
 type UnimplementedOrderManagementServer struct {
 }
 
-func (UnimplementedOrderManagementServer) GetOrder(context.Context, *wrappers.StringValue) (*Order, error) {
+func (UnimplementedOrderManagementServer) GetOrder(context.Context, *wrapperspb.StringValue) (*Order, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrder not implemented")
 }
 func (UnimplementedOrderManagementServer) mustEmbedUnimplementedOrderManagementServer() {}
@@ -77,7 +77,7 @@ func RegisterOrderManagementServer(s grpc.ServiceRegistrar, srv OrderManagementS
 }
 
 func _OrderManagement_GetOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(wrappers.StringValue)
+	in := new(wrapperspb.StringValue)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -89,7 +89,7 @@ func _OrderManagement_GetOrder_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: OrderManagement_GetOrder_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderManagementServer).GetOrder(ctx, req.(*wrappers.StringValue))
+		return srv.(OrderManagementServer).GetOrder(ctx, req.(*wrapperspb.StringValue))
 	}
 	return interceptor(ctx, in, info, handler)
 }
