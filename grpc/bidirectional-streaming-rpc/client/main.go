@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"log"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -12,9 +13,16 @@ import (
 	pb "github.com/ilovealt/goinaction/grpc/bidirectional-streaming-rpc/ecommerce"
 )
 
+func orderStreamClientInterceptor(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+	s := time.Now()
+	cs, error := streamer(ctx, desc, cc, method, opts...)
+	log.Printf("Client Steam method: %s, latency: %s\n", method, time.Since(s))
+	return cs, error
+}
+
 func main() {
 	// 测试环境，取消安全凭证
-	conn, err := grpc.NewClient("127.0.0.1:8009", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("127.0.0.1:8009", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithStreamInterceptor(orderStreamClientInterceptor))
 	if err != nil {
 		panic(err)
 	}

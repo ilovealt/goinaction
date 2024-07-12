@@ -1,7 +1,9 @@
 package main
 
 import (
+	"log"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -9,9 +11,17 @@ import (
 	pb "github.com/ilovealt/goinaction/grpc/bidirectional-streaming-rpc/ecommerce"
 )
 
+func orderStreamServerInterceptor(srv any, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+	s := time.Now()
+	// 方法调用
+	err := handler(srv, ss)
+	log.Printf("Server Method: %s, latency: %s\n", info.FullMethod, time.Since(s))
+	return err
+}
+
 func main() {
 	// 测试环境，取消安全凭证
-	s := grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
+	s := grpc.NewServer(grpc.Creds(insecure.NewCredentials()), grpc.StreamInterceptor(orderStreamServerInterceptor))
 
 	pb.RegisterOrderManagementServer(s, &OrderManagementImpl{})
 
