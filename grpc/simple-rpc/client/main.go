@@ -17,7 +17,7 @@ func orderUnaryClientInterceptor(ctx context.Context, method string, req, reply 
 	// 方法调用
 	err := invoker(ctx, method, req, reply, cc, opts...)
 
-	log.Printf("Clinet method: %s, req: %s, resp: %s, latency: %s\n", method, req, reply, time.Now().Sub(s))
+	log.Printf("Clinet method: %s, req: %s, resp: %s, latency: %s\n", method, req, reply, time.Since(s))
 
 	return err
 }
