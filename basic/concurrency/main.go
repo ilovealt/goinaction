@@ -1,9 +1,7 @@
 package main
 
-import "fmt"
-
 func main() {
-	fmt.Println("Hello Golang!")
+	//fmt.Println("Hello Golang!")
 
 	//zero_test1()
 	//one_test2()
@@ -11,5 +9,7 @@ func main() {
 	//ten_test4()
 
 	//run_pro_con()
+
+	Run_pub_sub()
 
 }
