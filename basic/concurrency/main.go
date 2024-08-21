@@ -10,6 +10,9 @@ func main() {
 
 	//run_pro_con()
 
-	Run_pub_sub()
+	//Run_pub_sub()
+
+	//Test_one()
+	Test_many()
 
 }
