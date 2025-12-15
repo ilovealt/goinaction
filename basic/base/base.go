@@ -1,10 +1,15 @@
 package main
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"iter"
+	"log"
+	"log/slog"
 	"maps"
 	"math"
+	"os"
 	"slices"
 	"time"
 )
@@ -32,7 +37,62 @@ func main() {
 	//qq()
 	//rr()
 	//ss()
-	tt()
+	//tt()
+	// uu()
+	vv()
+}
+
+func vv() {
+	log.Println("standard logger")
+
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+	log.Println("with micro")
+
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	log.Println("with file/line")
+
+	mylog := log.New(os.Stdout, "my:", log.LstdFlags)
+	mylog.Println("from mylog")
+
+	mylog.SetPrefix("ohmy:")
+	mylog.Println("from mylog")
+
+	var buf bytes.Buffer
+	buflog := log.New(&buf, "buf:", log.LstdFlags)
+	buflog.Println("hello")
+	fmt.Print("from buflog:", buf.String())
+
+	jsonHandler := slog.NewJSONHandler(os.Stderr, nil)
+	myslog := slog.New(jsonHandler)
+	myslog.Info("hi there")
+	myslog.Info("hello again", "key", "val", "age", 25)
+}
+
+type argError struct {
+	arg     int
+	message string
+}
+
+func (e *argError) Error() string {
+	return fmt.Sprintf("%d - %s", e.arg, e.message)
+}
+
+func f(arg int) (int, error) {
+	if arg == 42 {
+		return -1, &argError{arg, "can't work with it"}
+	}
+	return arg + 3, nil
+}
+
+func uu() {
+	_, err := f(42)
+	var ae *argError
+	if errors.As(err, &ae) {
+		fmt.Println(ae.arg)
+		fmt.Println(ae.message)
+	} else {
+		fmt.Println("err doesn't match argError")
+	}
 }
 
 func SlicesIndex[S ~[]E, E comparable](s S, v E) int {
